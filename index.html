@@ -1093,99 +1093,99 @@
       }
     }
 
-    async function loadViaCSV(sheetId) {
-      // KPI 탭 데이터 로드 (gid=0은 첫 번째 탭)
-      const kpiUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
-      
-      try {
-        const response = await fetch(kpiUrl);
-        const csv = await response.text();
-        const lines = csv.split('\n');
-        
-        if (lines.length > 1) {
-          const values = lines[1].split(',');
-          if (values[3]) document.getElementById('kpi-gmv').textContent = '$' + values[3].trim();
-          if (values[4]) document.getElementById('kpi-roas').textContent = values[4].trim();
-          if (values[5]) {
-            const mailVideo = parseInt(values[5].trim()) || 0;
-            const totalVideo = parseInt(values[6].trim()) || 0;
-            document.getElementById('kpi-video').textContent = mailVideo + '/' + totalVideo;
-          }
-        }
-      } catch (error) {
-        console.log('CSV 로드 실패:', error);
+async function loadViaCSV(sheetId) {
+  // KPI 탭 데이터 로드 (gid=0은 첫 번째 탭)
+  const kpiUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
+  
+  try {
+    const response = await fetch(kpiUrl);
+    const csv = await response.text();
+    const lines = csv.split('\n');
+    
+    if (lines.length > 1) {
+      const values = lines[1].split(',').map(v => v.trim().replace(/"/g, ''));
+      if (values[3]) document.getElementById('kpi-gmv').textContent = '$' + values[3];
+      if (values[4]) document.getElementById('kpi-roas').textContent = values[4];
+      if (values[5]) {
+        const mailVideo = parseInt(values[5]) || 0;
+        const totalVideo = parseInt(values[6]) || 0;
+        document.getElementById('kpi-video').textContent = mailVideo + totalVideo;
       }
-
-      // 메일시딩 탭 데이터 로드 (gid=1)
-      const mailUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=1`;
-      
-      try {
-        const response = await fetch(mailUrl);
-        const csv = await response.text();
-        const lines = csv.split('\n');
-        
-        let newVideo = 0, newAmount = 0;
-        let kgVideo = 0, kgAmount = 0;
-        let vipVideo = 0, vipAmount = 0;
-        
-        for (let i = 1; i < lines.length; i++) {
-          if (!lines[i].trim()) continue;
-          const values = lines[i].split(',');
-          const group = values[0].trim();
-          const video = parseInt(values[1].trim()) || 0;
-          const amount = parseInt(values[2].trim()) || 0;
-          
-          if (group === '신규 그룹') { newVideo = video; newAmount = amount; }
-          else if (group === '킵고잉 그룹') { kgVideo = video; kgAmount = amount; }
-          else if (group === 'VIP 그룹') { vipVideo = video; vipAmount = amount; }
-        }
-        
-        document.getElementById('mail-new-video').textContent = newVideo;
-        document.getElementById('mail-new-amount').textContent = '$' + newAmount;
-        document.getElementById('mail-kg-video').textContent = kgVideo;
-        document.getElementById('mail-kg-amount').textContent = '$' + kgAmount;
-        document.getElementById('mail-vip-video').textContent = vipVideo;
-        document.getElementById('mail-vip-amount').textContent = '$' + vipAmount;
-      } catch (error) {
-        console.log('메일시딩 로드 실패:', error);
-      }
-
-      // 메일이외 탭 데이터 로드 (gid=2)
-      const nonMailUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=2`;
-      
-      try {
-        const response = await fetch(nonMailUrl);
-        const csv = await response.text();
-        const lines = csv.split('\n');
-        
-        let ocVideo = 0, ocAmount = 0;
-        let tcVideo = 0, tcAmount = 0;
-        let discordVideo = 0, discordAmount = 0;
-        
-        for (let i = 1; i < lines.length; i++) {
-          if (!lines[i].trim()) continue;
-          const values = lines[i].split(',');
-          const channel = values[0].trim();
-          const video = parseInt(values[1].trim()) || 0;
-          const amount = parseInt(values[2].trim()) || 0;
-          
-          if (channel === 'OC') { ocVideo = video; ocAmount = amount; }
-          else if (channel === 'TC') { tcVideo = video; tcAmount = amount; }
-          else if (channel === '디스코드') { discordVideo = video; discordAmount = amount; }
-        }
-        
-        document.getElementById('oc-video').textContent = ocVideo;
-        document.getElementById('oc-amount').textContent = '$' + ocAmount;
-        document.getElementById('tc-video').textContent = tcVideo;
-        document.getElementById('tc-amount').textContent = '$' + tcAmount;
-        document.getElementById('discord-video').textContent = discordVideo;
-        document.getElementById('discord-amount').textContent = '$' + discordAmount;
-      } catch (error) {
-        console.log('메일이외 로드 실패:', error);
-      }
-      
-      updateTotals();
     }
+  } catch (error) {
+    console.log('CSV 로드 실패:', error);
+  }
+
+  // 메일시딩 탭 데이터 로드 (gid=1)
+  const mailUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=1`;
+  
+  try {
+    const response = await fetch(mailUrl);
+    const csv = await response.text();
+    const lines = csv.split('\n');
+    
+    let newVideo = 0, newAmount = 0;
+    let kgVideo = 0, kgAmount = 0;
+    let vipVideo = 0, vipAmount = 0;
+    
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      const group = values[0];
+      const video = parseInt(values[1]) || 0;
+      const amount = parseInt(values[2]) || 0;
+      
+      if (group === '신규 그룹') { newVideo = video; newAmount = amount; }
+      else if (group === '킵고잉 그룹') { kgVideo = video; kgAmount = amount; }
+      else if (group === 'VIP 그룹') { vipVideo = video; vipAmount = amount; }
+    }
+    
+    document.getElementById('mail-new-video').textContent = newVideo;
+    document.getElementById('mail-new-amount').textContent = '$' + newAmount;
+    document.getElementById('mail-kg-video').textContent = kgVideo;
+    document.getElementById('mail-kg-amount').textContent = '$' + kgAmount;
+    document.getElementById('mail-vip-video').textContent = vipVideo;
+    document.getElementById('mail-vip-amount').textContent = '$' + vipAmount;
+  } catch (error) {
+    console.log('메일시딩 로드 실패:', error);
+  }
+
+  // 메일이외 탭 데이터 로드 (gid=2)
+  const nonMailUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=2`;
+  
+  try {
+    const response = await fetch(nonMailUrl);
+    const csv = await response.text();
+    const lines = csv.split('\n');
+    
+    let ocVideo = 0, ocAmount = 0;
+    let tcVideo = 0, tcAmount = 0;
+    let discordVideo = 0, discordAmount = 0;
+    
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      const channel = values[0];
+      const video = parseInt(values[1]) || 0;
+      const amount = parseInt(values[2]) || 0;
+      
+      if (channel === 'OC') { ocVideo = video; ocAmount = amount; }
+      else if (channel === 'TC') { tcVideo = video; tcAmount = amount; }
+      else if (channel === '디스코드') { discordVideo = video; discordAmount = amount; }
+    }
+    
+    document.getElementById('oc-video').textContent = ocVideo;
+    document.getElementById('oc-amount').textContent = '$' + ocAmount;
+    document.getElementById('tc-video').textContent = tcVideo;
+    document.getElementById('tc-amount').textContent = '$' + tcAmount;
+    document.getElementById('discord-video').textContent = discordVideo;
+    document.getElementById('discord-amount').textContent = '$' + discordAmount;
+  } catch (error) {
+    console.log('메일이외 로드 실패:', error);
+  }
+  
+  updateTotals();
+}
 
     function updateDashboardFromAPI(range, values) {
       if (range.includes('KPI')) {
