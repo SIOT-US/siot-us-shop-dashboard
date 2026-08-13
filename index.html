@@ -7,42 +7,1228 @@
   <style>
     :root {
       --accent: #C8956D;
+      --accent-light: #D9A984;
       --text-primary: #1F2937;
       --text-secondary: #6B7280;
       --bg-primary: #FFFFFF;
       --bg-secondary: #F9FAFB;
       --border: #E5E7EB;
+      --success: #059669;
+      --warning: #D97706;
+      --info: #8B5CF6;
+      --bg-light: #FFFBF8;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg-secondary); color: var(--text-primary); }
-    .container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
-    h1 { font-size: 24px; color: var(--accent); margin-bottom: 20px; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
-    .kpi-card { background: var(--bg-primary); padding: 20px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
-    .kpi-value { font-size: 32px; font-weight: 700; color: var(--accent); margin: 10px 0; }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #F3F4F6;
+        --text-secondary: #9CA3AF;
+        --bg-primary: #0F172A;
+        --bg-secondary: #1F2937;
+        --border: #374151;
+        --bg-light: #1A1F2E;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --text-primary: #F3F4F6;
+      --text-secondary: #9CA3AF;
+      --bg-primary: #0F172A;
+      --bg-secondary: #1F2937;
+      --border: #374151;
+      --bg-light: #1A1F2E;
+    }
+
+    :root[data-theme="light"] {
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --border: #E5E7EB;
+      --bg-light: #FFFBF8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 20px 0;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .team-info {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .team-member {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .team-member strong {
+      color: var(--text-primary);
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Main content */
+    .content {
+      display: grid;
+      gap: 32px;
+    }
+
+    /* Section */
+    .section {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: var(--bg-light);
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section.collapsible .section-header {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .section.collapsible .section-header:hover {
+      background: var(--border);
+    }
+
+    .section.collapsible .section-header::after {
+      content: "▼";
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--accent);
+      transition: transform 0.3s ease;
+    }
+
+    .section.collapsible.collapsed .section-header::after {
+      transform: rotate(-90deg);
+    }
+
+    .section.collapsible.collapsed .section-body {
+      display: none;
+    }
+
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    .section-body {
+      padding: 24px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-subtext {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: var(--bg-light);
+      border-bottom: 2px solid var(--border);
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status-success {
+      background: rgba(5, 150, 105, 0.1);
+      color: var(--success);
+    }
+
+    .status-warning {
+      background: rgba(217, 119, 6, 0.1);
+      color: var(--warning);
+    }
+
+    .status-info {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--info);
+    }
+
+    /* Checkbox List */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-light);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .checklist-item label {
+      cursor: pointer;
+      flex: 1;
+      user-select: none;
+    }
+
+    .checklist-item input:checked + label {
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    /* Sub sections */
+    .subsection {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .subsection:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .subsection-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .subsection-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .subsection-item {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 8px;
+    }
+
+    .subsection-item strong {
+      color: var(--text-primary);
+      min-width: 80px;
+    }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .content-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .content-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .content-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Role Section */
+    .role-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .role-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      border-left: 4px solid var(--accent);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .role-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      grid-column: 1;
+    }
+
+    .role-card ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      grid-column: 1;
+    }
+
+    .role-card li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .role-card li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .role-tasks {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    .role-tasks h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .role-tasks .task-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .role-tasks .task-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .role-tasks .task-check label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .role-tasks .task-check input:checked + label {
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    @media (max-width: 1024px) {
+      .role-card {
+        grid-template-columns: 1fr;
+      }
+
+      .role-tasks {
+        grid-column: 1;
+        grid-row: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+    }
+
+    /* Action Grid */
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .action-box {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px;
+    }
+
+    .action-box h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .action-box .target {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .action-box .target strong {
+      color: var(--text-primary);
+    }
+
+    .action-box .current {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .action-box .current strong {
+      color: var(--text-primary);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .role-container {
+        grid-template-columns: 1fr;
+      }
+
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 8px 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎯 SIOT US TikTok Shop - 업무 대시보드</h1>
-    <p>대시보드가 로드 중입니다... 잠시만 기다려주세요!</p>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div>GMV</div>
-        <div class="kpi-value">$0</div>
-      </div>
-      <div class="kpi-card">
-        <div>ROI</div>
-        <div class="kpi-value">0</div>
-      </div>
-      <div class="kpi-card">
-        <div>영상 수</div>
-        <div class="kpi-value">0</div>
+  <div class="header">
+    <div class="header-content">
+      <h1>SIOT US TikTok Shop</h1>
+      <div class="header-meta">
+        <div class="team-info">
+          <div class="team-member"><strong>윤선우</strong></div>
+          <div class="team-member"><strong>임수연</strong></div>
+          <div class="team-member"><strong>정윤정</strong></div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="theme-toggle" onclick="document.getElementById('sheet-modal').style.display='flex'">⚙️</button>
       </div>
     </div>
   </div>
+
+  <!-- Google Sheets Setup Modal -->
+  <div id="sheet-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: var(--bg-primary); border-radius: 8px; padding: 32px; max-width: 500px; width: 90%;">
+      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 20px; color: var(--text-primary);">Google Sheets 연동</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">공개 설정된 Google Sheet의 ID를 입력하면 자동으로 데이터를 가져옵니다.</p>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Sheet ID</label>
+        <input type="text" id="sheet-id" placeholder="예: 1BxiMVs0XRA5nFMXT..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; background: var(--bg-light); color: var(--text-primary);" />
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Google Sheet URL에서 /d/ 다음 부분을 복사하세요</p>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">API Key (선택사항)</label>
+        <input type="text" id="api-key" placeholder="Google API Key" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; background: var(--bg-light); color: var(--text-primary);" />
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">API Key가 없으면 공개 Sheet에서 CSV로 가져옵니다</p>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button onclick="document.getElementById('sheet-modal').style.display='none'" style="padding: 8px 16px; border: 1px solid var(--border); background: var(--bg-light); color: var(--text-primary); border-radius: 4px; cursor: pointer; font-size: 13px;">취소</button>
+        <button onclick="setupGoogleSheet()" style="padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500;">연동하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="content">
+      <!-- KPI Dashboard -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">📊</span>
+          <h2 id="kpi-title">KPI 현황 (This week)</h2>
+        </div>
+        <div class="section-body">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">GMV</div>
+              <div class="kpi-value" id="kpi-gmv">$0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">ROI</div>
+              <div class="kpi-value" id="kpi-roas">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">영상 수</div>
+              <div class="kpi-value" id="kpi-video">0</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border);">
+            <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">메일 시딩 상세 <span style="font-weight: 400; color: var(--accent);">( <span id="mail-total-video">0</span>개 )</span></h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">신규 그룹</div>
+                <div style="display: flex; gap: 12px; font-size: 13px;">
+                  <div>영상: <strong id="mail-new-video">0</strong></div>
+                  <div>GMV: <strong id="mail-new-amount">$0</strong></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">킵고잉 그룹</div>
+                <div style="display: flex; gap: 12px; font-size: 13px;">
+                  <div>영상: <strong id="mail-kg-video">0</strong></div>
+                  <div>GMV: <strong id="mail-kg-amount">$0</strong></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">VIP 그룹</div>
+                <div style="display: flex; gap: 12px; font-size: 13px;">
+                  <div>영상: <strong id="mail-vip-video">0</strong></div>
+                  <div>GMV: <strong id="mail-vip-amount">$0</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+              <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">메일 이외 시딩 <span style="font-weight: 400; color: var(--accent);">( <span id="non-mail-total-video">0</span>개 )</span></h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">OC</div>
+                  <div style="display: flex; gap: 12px; font-size: 13px;">
+                    <div>영상: <strong id="oc-video">0</strong></div>
+                    <div>GMV: <strong id="oc-amount">$0</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">TC</div>
+                  <div style="display: flex; gap: 12px; font-size: 13px;">
+                    <div>영상: <strong id="tc-video">0</strong></div>
+                    <div>GMV: <strong id="tc-amount">$0</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">디스코드</div>
+                  <div style="display: flex; gap: 12px; font-size: 13px;">
+                    <div>영상: <strong id="discord-video">0</strong></div>
+                    <div>GMV: <strong id="discord-amount">$0</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">🔗</span>
+          <h2>빠른 링크</h2>
+        </div>
+        <div class="section-body">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">북미사업2팀 회의록</a>
+            </div>
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">KPI 대시보드</a>
+            </div>
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">신규 소통 시트</a>
+            </div>
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">킵고잉 소통 시트</a>
+            </div>
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">VIP 소통 시트</a>
+            </div>
+            <div style="padding: 12px; background: var(--bg-light); border-radius: 4px; border: 1px solid var(--border); text-align: center;">
+              <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;">전체 캘린더</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKU Information -->
+      <div class="section collapsible">
+        <div class="section-header">
+          <span class="section-icon">📦</span>
+          <h2>SKU 기본 정보</h2>
+        </div>
+        <div class="section-body">
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>제품명</th>
+                  <th>SKU</th>
+                  <th>설명</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>라이스잼</strong></td>
+                  <td><code>AX1ARJ012500</code></td>
+                  <td>SIOT Rice Jam Mask 250ML 1EA</td>
+                </tr>
+                <tr>
+                  <td><strong>약초비누</strong></td>
+                  <td><code>AX1ASB000900</code></td>
+                  <td>SIOT HERBAL MUCIN FACIAL SOAP BAR 90G X 1EA</td>
+                </tr>
+                <tr>
+                  <td><strong>괄사크림</strong></td>
+                  <td><code>AX1AMC050600</code></td>
+                  <td>SIOT Matcha Catechin Sculpting Gua Sha Cream 60ml 1EA</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Status -->
+      <div class="section collapsible">
+        <div class="section-header">
+          <span class="section-icon">🎬</span>
+          <h2>컨텐츠</h2>
+        </div>
+        <div class="section-body">
+          <div class="content-grid">
+            <div class="content-card">
+              <h4>라이스잼</h4>
+            </div>
+            <div class="content-card">
+              <h4>괄사크림</h4>
+            </div>
+            <div class="content-card">
+              <h4>약초비누</h4>
+            </div>
+            <div class="content-card">
+              <h4>번들</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Team Roles -->
+      <div class="section collapsible">
+        <div class="section-header">
+          <span class="section-icon">👥</span>
+          <h2>업무 분담</h2>
+        </div>
+        <div class="section-body">
+          <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+            <h3 style="font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">공통 주제</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;"><strong>틱톡샵 컨텐츠 고도화</strong></p>
+            <ul style="font-size: 13px; color: var(--text-secondary); list-style: none; padding-left: 16px; display: flex; flex-direction: column; gap: 6px;">
+              <li>• <strong>풀퍼널 구조화</strong> — 틱톡에서 시옷 컨텐츠가 먹히는 이유를 구조로 정리</li>
+              <li>• <strong>시각화</strong> — 구조화한 내용을 볼 수 있는 형태로 산출</li>
+              <li>• <strong>지속 갱신</strong> — 주기적 구조 업데이트 및 신규 구조 발견</li>
+            </ul>
+          </div>
+
+          <div class="role-container">
+            <div class="role-card">
+              <h3>윤선우 (리드)</h3>
+              <ul>
+                <li>틱톡 채널 전반의 리드타임 관리</li>
+                <li>일 300개 영상 시딩 전략 수립 및 관리</li>
+                <li>KPI 체크</li>
+                <li>3PL 체크</li>
+              </ul>
+              <div class="role-tasks">
+                <h4>루틴 업무</h4>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task1">
+                  <label for="sunwoo-task1">출고 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task2">
+                  <label for="sunwoo-task2">인박스 처리</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task3">
+                  <label for="sunwoo-task3">지불 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task4">
+                  <label for="sunwoo-task4">컨텐츠 기획</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task5">
+                  <label for="sunwoo-task5">컨텐츠 회고</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="sunwoo-task6">
+                  <label for="sunwoo-task6">매출 확인</label>
+                </div>
+              </div>
+            </div>
+            <div class="role-card">
+              <h3>임수연 (시딩 전략)</h3>
+              <ul>
+                <li>VIP 전략 및 액션</li>
+                <li>디스코드 채널 전략 및 액션</li>
+                <li>FBT 물류 관리</li>
+              </ul>
+              <div class="role-tasks">
+                <h4>루틴 업무</h4>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task1">
+                  <label for="suyeon-task1">출고 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task2">
+                  <label for="suyeon-task2">인박스 처리</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task3">
+                  <label for="suyeon-task3">지불 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task4">
+                  <label for="suyeon-task4">컨텐츠 기획</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task5">
+                  <label for="suyeon-task5">컨텐츠 회고</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="suyeon-task6">
+                  <label for="suyeon-task6">매출 확인</label>
+                </div>
+              </div>
+            </div>
+            <div class="role-card">
+              <h3>정윤정 (채널 서포트)</h3>
+              <ul>
+                <li>틱톡 채널 서포트 (우선)</li>
+                <li>메일 시딩 업무 진행</li>
+                <li>시딩 및 크리에이터 엑셀 관리</li>
+                <li>정기회의 서기</li>
+              </ul>
+              <div class="role-tasks">
+                <h4>루틴 업무</h4>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task1">
+                  <label for="yunjeong-task1">출고 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task2">
+                  <label for="yunjeong-task2">인박스 처리</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task3">
+                  <label for="yunjeong-task3">지불 요청</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task4">
+                  <label for="yunjeong-task4">컨텐츠 기획</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task5">
+                  <label for="yunjeong-task5">컨텐츠 회고</label>
+                </div>
+                <div class="task-check">
+                  <input type="checkbox" id="yunjeong-task6">
+                  <label for="yunjeong-task6">매출 확인</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Actions -->
+      <div class="section collapsible">
+        <div class="section-header">
+          <span class="section-icon">🎯</span>
+          <h2>세부 액션 관리</h2>
+        </div>
+        <div class="section-body">
+          <div class="action-grid">
+            <!-- Mail Seeding - New Group -->
+            <div class="action-box">
+              <h4>신규 그룹</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+
+            <!-- Mail Seeding - Keep Going -->
+            <div class="action-box">
+              <h4>킵고잉 그룹</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+
+            <!-- Mail Seeding - VIP -->
+            <div class="action-box">
+              <h4>VIP 그룹</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+
+            <!-- Non-Mail - OC -->
+            <div class="action-box">
+              <h4>OC</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 이외 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+
+            <!-- Non-Mail - TC -->
+            <div class="action-box">
+              <h4>TC</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 이외 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+
+            <!-- Non-Mail - Discord -->
+            <div class="action-box">
+              <h4>디스코드</h4>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">메일 이외 시딩</div>
+              <div class="target">목표: <strong>설정 필요</strong></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="current">현황: <strong>0 / 목표</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>마지막 업데이트: 2026-08-13 | 팀: 윤선우 · 임수연 · 정윤정</p>
+      </div>
+    </div>
+  </div>
+
   <script>
-    console.log('대시보드 준비 완료!');
+    // Theme Toggle
+    function toggleTheme() {
+      const root = document.documentElement;
+      const current = root.getAttribute('data-theme') ||
+                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    }
+
+    // Google Sheets Setup
+    function setupGoogleSheet() {
+      const sheetId = document.getElementById('sheet-id').value;
+      const apiKey = document.getElementById('api-key').value;
+
+      if (!sheetId) {
+        alert('Sheet ID를 입력하세요');
+        return;
+      }
+
+      localStorage.setItem('googleSheetId', sheetId);
+      if (apiKey) {
+        localStorage.setItem('googleApiKey', apiKey);
+      }
+
+      document.getElementById('sheet-modal').style.display = 'none';
+      loadGoogleSheetData();
+    }
+
+    // Load data from Google Sheets
+    async function loadGoogleSheetData() {
+      const sheetId = localStorage.getItem('googleSheetId');
+      if (!sheetId) return;
+
+      try {
+        // Try API method first if key exists
+        const apiKey = localStorage.getItem('googleApiKey');
+        if (apiKey) {
+          await loadViaAPI(sheetId, apiKey);
+        } else {
+          // Fallback to CSV export
+          await loadViaCSV(sheetId);
+        }
+      } catch (error) {
+        console.error('Google Sheets 로드 실패:', error);
+      }
+    }
+
+    async function loadViaAPI(sheetId, apiKey) {
+      const ranges = ['KPI!A:E', '메일시딩!A:D', '메일이외!A:D', '세부액션!A:D'];
+
+      for (const range of ranges) {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.values) {
+          updateDashboardFromAPI(range, data.values);
+        }
+      }
+    }
+
+    async function loadViaCSV(sheetId) {
+      // Google Sheets CSV export URL
+      const gid0 = 0; // KPI sheet GID
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid0}`;
+
+      try {
+        const response = await fetch(url, {
+          mode: 'no-cors'
+        });
+
+        // Note: no-cors mode limits what we can do
+        // For better results, use the API key method above
+        console.log('CSV 로드 시도 - 공개 설정 확인 필요');
+      } catch (error) {
+        console.error('CSV 로드 실패:', error);
+      }
+    }
+
+    function updateDashboardFromAPI(range, values) {
+      if (range.includes('KPI')) {
+        // KPI 데이터 업데이트
+        // 예: [[GMV, ROI, 메일영상, 전체영상, ...], [...]]
+        if (values.length > 1) {
+          const data = values[1]; // 첫 번째 데이터 행
+          if (data[0]) document.getElementById('kpi-gmv').textContent = '$' + data[0];
+          if (data[1]) document.getElementById('kpi-roas').textContent = data[1];
+          if (data[2] && data[3]) document.getElementById('kpi-video').textContent = data[2] + '/' + data[3];
+        }
+      }
+    }
+
+    // Sample data update (테스트용 - 실제 데이터는 Google Sheets에서)
+    function setSampleData() {
+      document.getElementById('kpi-gmv').textContent = '$0';
+      document.getElementById('kpi-roas').textContent = '0';
+      document.getElementById('kpi-video').textContent = '0/0';
+    }
+
+    // Set week date
+    function setWeekDate() {
+      const today = new Date(2026, 7, 12); // August 12, 2026 (현재 날짜)
+
+      // Get Monday of this week
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+      const monday = new Date(today.setDate(diff));
+
+      // Get Sunday of this week
+      const sunday = new Date(monday);
+      sunday.setDate(sunday.getDate() + 6);
+
+      // Format dates
+      const monthStart = (monday.getMonth() + 1);
+      const dateStart = monday.getDate();
+      const dateEnd = sunday.getDate();
+
+      const dateRange = `${monthStart}/${dateStart} - ${monthStart}/${dateEnd}`;
+      document.getElementById('kpi-title').textContent = `KPI 현황 (This week) ${dateRange}`;
+    }
+
+    // Calculate total videos
+    function updateTotals() {
+      const mailNewVideo = parseInt(document.getElementById('mail-new-video').textContent) || 0;
+      const mailKgVideo = parseInt(document.getElementById('mail-kg-video').textContent) || 0;
+      const mailVipVideo = parseInt(document.getElementById('mail-vip-video').textContent) || 0;
+
+      const ocVideo = parseInt(document.getElementById('oc-video').textContent) || 0;
+      const tcVideo = parseInt(document.getElementById('tc-video').textContent) || 0;
+      const discordVideo = parseInt(document.getElementById('discord-video').textContent) || 0;
+
+      const mailTotal = mailNewVideo + mailKgVideo + mailVipVideo;
+      const nonMailTotal = ocVideo + tcVideo + discordVideo;
+      const allTotal = mailTotal + nonMailTotal;
+
+      document.getElementById('mail-total-video').textContent = mailTotal;
+      document.getElementById('non-mail-total-video').textContent = nonMailTotal;
+      document.getElementById('kpi-video').textContent = allTotal;
+    }
+
+    // Collapsible sections
+    function initCollapsible() {
+      const collapsibleSections = document.querySelectorAll('.section.collapsible');
+
+      collapsibleSections.forEach(section => {
+        const header = section.querySelector('.section-header');
+        const h2 = section.querySelector('h2');
+
+        if (header && h2) {
+          // Restore collapsed state from localStorage
+          const sectionTitle = h2.textContent.trim();
+          if (localStorage.getItem(`collapsed-${sectionTitle}`) === 'true') {
+            section.classList.add('collapsed');
+          }
+
+          // Add click listener
+          header.addEventListener('click', function(e) {
+            e.preventDefault();
+            section.classList.toggle('collapsed');
+            localStorage.setItem(`collapsed-${sectionTitle}`, section.classList.contains('collapsed'));
+          });
+        }
+      });
+    }
+
+    // Close modal on outside click
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('sheet-modal');
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      // Load saved sheet ID if exists
+      const savedSheetId = localStorage.getItem('googleSheetId');
+      if (savedSheetId) {
+        document.getElementById('sheet-id').value = savedSheetId;
+      }
+
+      initCollapsible();
+      setWeekDate();
+      updateTotals();
+      initTheme();
+
+      // Update totals when data changes (for Google Sheets integration)
+      const videoElements = ['mail-new-video', 'mail-kg-video', 'mail-vip-video', 'oc-video', 'tc-video', 'discord-video'];
+      videoElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          const observer = new MutationObserver(updateTotals);
+          observer.observe(element, { characterData: true, subtree: true, childList: true });
+        }
+      });
+    });
   </script>
 </body>
 </html>
