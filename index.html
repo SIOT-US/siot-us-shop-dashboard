@@ -581,55 +581,25 @@
           </div>
 
           <div style="margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border);">
-            <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">메일 시딩 상세 <span style="font-weight: 400; color: var(--accent);">( <span id="mail-total-video">0</span>개 )</span></h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-              <div>
-                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">신규 그룹</div>
-                <div style="display: flex; gap: 12px; font-size: 13px;">
-                  <div>영상: <strong id="mail-new-video">0</strong></div>
-                  <div>GMV: <strong id="mail-new-amount">$0</strong></div>
-                </div>
-              </div>
-              <div>
-                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">킵고잉 그룹</div>
-                <div style="display: flex; gap: 12px; font-size: 13px;">
-                  <div>영상: <strong id="mail-kg-video">0</strong></div>
-                  <div>GMV: <strong id="mail-kg-amount">$0</strong></div>
-                </div>
-              </div>
-              <div>
-                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">VIP 그룹</div>
-                <div style="display: flex; gap: 12px; font-size: 13px;">
-                  <div>영상: <strong id="mail-vip-video">0</strong></div>
-                  <div>GMV: <strong id="mail-vip-amount">$0</strong></div>
-                </div>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 24px;">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px; background: var(--bg-light); border-radius: 6px; border: 1px solid var(--border);">
+                <span style="font-size: 15px; font-weight: 600; color: var(--text-primary);">메일 시딩</span>
+                <span style="font-size: 13px; color: var(--accent); font-weight: 500;">( <span id="mail-total-video">0</span>개 )</span>
+                <span style="color: var(--border); margin: 0 4px;">|</span>
+                <span style="font-size: 13px; color: var(--text-secondary);">신규: <strong id="mail-new-video" style="color: var(--text-primary);">0</strong></span>
+                <span style="font-size: 13px; color: var(--text-secondary);">킵고잉: <strong id="mail-kg-video" style="color: var(--text-primary);">0</strong></span>
+                <span style="font-size: 13px; color: var(--text-secondary);">VIP: <strong id="mail-vip-video" style="color: var(--text-primary);">0</strong></span>
               </div>
             </div>
 
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
-              <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">메일 이외 시딩 <span style="font-weight: 400; color: var(--accent);">( <span id="non-mail-total-video">0</span>개 )</span></h3>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                <div>
-                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">OC</div>
-                  <div style="display: flex; gap: 12px; font-size: 13px;">
-                    <div>영상: <strong id="oc-video">0</strong></div>
-                    <div>GMV: <strong id="oc-amount">$0</strong></div>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">TC</div>
-                  <div style="display: flex; gap: 12px; font-size: 13px;">
-                    <div>영상: <strong id="tc-video">0</strong></div>
-                    <div>GMV: <strong id="tc-amount">$0</strong></div>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">디스코드</div>
-                  <div style="display: flex; gap: 12px; font-size: 13px;">
-                    <div>영상: <strong id="discord-video">0</strong></div>
-                    <div>GMV: <strong id="discord-amount">$0</strong></div>
-                  </div>
-                </div>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px; background: var(--bg-light); border-radius: 6px; border: 1px solid var(--border);">
+                <span style="font-size: 15px; font-weight: 600; color: var(--text-primary);">메일 이외</span>
+                <span style="font-size: 13px; color: var(--accent); font-weight: 500;">( <span id="non-mail-total-video">0</span>개 )</span>
+                <span style="color: var(--border); margin: 0 4px;">|</span>
+                <span style="font-size: 13px; color: var(--text-secondary);">OC: <strong id="oc-video" style="color: var(--text-primary);">0</strong></span>
+                <span style="font-size: 13px; color: var(--text-secondary);">TC: <strong id="tc-video" style="color: var(--text-primary);">0</strong></span>
+                <span style="font-size: 13px; color: var(--text-secondary);">디스코드: <strong id="discord-video" style="color: var(--text-primary);">0</strong></span>
               </div>
             </div>
           </div>
