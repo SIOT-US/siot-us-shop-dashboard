@@ -1093,24 +1093,60 @@
       }
     }
 
+// CSV 파싱 함수 (쉼표를 포함한 필드도 제대로 파싱)
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let insideQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      insideQuotes = !insideQuotes;
+    } else if (char === ',' && !insideQuotes) {
+      result.push(current.trim().replace(/"/g, ''));
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  result.push(current.trim().replace(/"/g, ''));
+  return result;
+}
+
 async function loadViaCSV(sheetId) {
-  // KPI 탭 데이터 로드 (gid=0)
+  // KPI 탭 데이터 로드 (gid=0) - 현재 날짜 기준으로 이번 주차 찾기
   const kpiUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
   
   try {
     const response = await fetch(kpiUrl);
     const csv = await response.text();
-    const lines = csv.split('\n');
+    const lines = csv.split('\n').filter(line => line.trim());
     
     if (lines.length > 1) {
-      const values = lines[1].split(',').map(v => v.trim().replace(/"/g, ''));
-      // A: 주차 (0) | B: 시작일 (1) | C: 종료일 (2) | D: GMV (3) | E: ROI (4) | F: 메일시딩영상 (5) | G: 메일이외영상 (6) | H: 전체영상 (7)
-      if (values[3]) document.getElementById('kpi-gmv').textContent = values[3];
-      if (values[4]) document.getElementById('kpi-roas').textContent = values[4];
-      if (values[5] && values[6]) {
-        const mailVideo = parseInt(values[5]) || 0;
-        const nonMailVideo = parseInt(values[6]) || 0;
-        document.getElementById('kpi-video').textContent = mailVideo + nonMailVideo;
+      const today = new Date(2026, 7, 14); // 현재 날짜: 2026-08-14
+      
+      // 각 행을 확인해서 현재 날짜가 포함된 주차 찾기
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        // A: 주차 (0) | B: 시작일 (1) | C: 종료일 (2) | D: GMV (3) | E: ROI (4) | F: 메일시딩영상 (5) | G: 메일이외영상 (6)
+        
+        const startDate = new Date(values[1] + 'T00:00:00');
+        const endDate = new Date(values[2] + 'T23:59:59');
+        
+        // 현재 날짜가 이 주차 범위에 포함되는지 확인
+        if (today >= startDate && today <= endDate) {
+          if (values[3]) document.getElementById('kpi-gmv').textContent = values[3];
+          if (values[4]) document.getElementById('kpi-roas').textContent = values[4];
+          if (values[5] && values[6]) {
+            const mailVideo = parseInt(values[5]) || 0;
+            const nonMailVideo = parseInt(values[6]) || 0;
+            document.getElementById('kpi-video').textContent = mailVideo + nonMailVideo;
+          }
+          break;
+        }
       }
     }
   } catch (error) {
@@ -1131,7 +1167,7 @@ async function loadViaCSV(sheetId) {
     
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
-      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      const values = parseCSVLine(lines[i]);
       // A: 주차 (0) | B: 그룹 (1) | C: 영상수 (2) | D: GMV (3)
       
       const group = values[1];
@@ -1167,7 +1203,7 @@ async function loadViaCSV(sheetId) {
     
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
-      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      const values = parseCSVLine(lines[i]);
       // A: 주차 (0) | B: 채널 (1) | C: 영상수 (2) | D: GMV (3)
       
       const channel = values[1];
