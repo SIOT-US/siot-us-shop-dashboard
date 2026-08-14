@@ -1212,28 +1212,6 @@
               if (values[7]) {
                 document.getElementById('kpi-video').textContent = values[7];
               }
-
-              // 도넛 차트용 메일시딩/메일이외 영상 수 저장
-              if (values[5]) {
-                const mailVideoTotal = parseInt(values[5]) || 0;
-                // 메일시딩을 신규, 킵고잉, VIP로 균등 분배 (실제로는 각 탭에서 가져와야 하지만, 현재는 임시로 균등 분배)
-                const mailPerGroup = Math.floor(mailVideoTotal / 3);
-                const mailRemainder = mailVideoTotal % 3;
-                document.getElementById('mail-new-video').textContent = mailPerGroup + (mailRemainder > 0 ? 1 : 0);
-                document.getElementById('mail-kg-video').textContent = mailPerGroup + (mailRemainder > 1 ? 1 : 0);
-                document.getElementById('mail-vip-video').textContent = mailPerGroup;
-              }
-
-              if (values[6]) {
-                const nonMailVideoTotal = parseInt(values[6]) || 0;
-                // 메일이외를 OC, TC, 디스코드로 균등 분배
-                const nonMailPerChannel = Math.floor(nonMailVideoTotal / 3);
-                const nonMailRemainder = nonMailVideoTotal % 3;
-                document.getElementById('oc-video').textContent = nonMailPerChannel + (nonMailRemainder > 0 ? 1 : 0);
-                document.getElementById('tc-video').textContent = nonMailPerChannel + (nonMailRemainder > 1 ? 1 : 0);
-                document.getElementById('discord-video').textContent = nonMailPerChannel;
-              }
-
               break;
             }
           }
@@ -1257,10 +1235,10 @@
         for (let i = 1; i < lines.length; i++) {
           if (!lines[i].trim()) continue;
           const values = parseCSVLine(lines[i]);
-          // A: 주차 (0) | B: 그룹 (1) | C: 영상수 (2) | D: GMV (3)
+          // A: 주차 (0) | B: 그룹 (1) | C: 제목 (2) | D: GMV (3) | E: 영상수 (4)
 
           const group = values[1];
-          const video = parseInt(values[2]) || 0;
+          const video = parseInt(values[4]) || 0;
           const amount = values[3];
 
           if (group === '신규 그룹') { newVideo = video; newAmount = amount; }
@@ -1293,10 +1271,10 @@
         for (let i = 1; i < lines.length; i++) {
           if (!lines[i].trim()) continue;
           const values = parseCSVLine(lines[i]);
-          // A: 주차 (0) | B: 채널 (1) | C: 영상수 (2) | D: GMV (3)
+          // A: 주차 (0) | B: 채널 (1) | C: 제목 (2) | D: GMV (3) | E: 영상수 (4)
 
           const channel = values[1];
-          const video = parseInt(values[2]) || 0;
+          const video = parseInt(values[4]) || 0;
           const amount = values[3];
 
           if (channel === 'OC') { ocVideo = video; ocAmount = amount; }
