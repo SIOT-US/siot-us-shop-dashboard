@@ -1209,10 +1209,8 @@
             if (today >= startDate && today <= endDate) {
               if (values[3]) document.getElementById('kpi-gmv').textContent = values[3];
               if (values[4]) document.getElementById('kpi-roas').textContent = values[4];
-              if (values[5] && values[6]) {
-                const mailVideo = parseInt(values[5]) || 0;
-                const nonMailVideo = parseInt(values[6]) || 0;
-                document.getElementById('kpi-video').textContent = mailVideo + nonMailVideo;
+              if (values[7]) {
+                document.getElementById('kpi-video').textContent = values[7];
               }
               break;
             }
